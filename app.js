@@ -15,15 +15,15 @@
             const reader = new FileReader();
 
             reader.onload = function (e) {
-                selectedImage = new Image();
-                selectedImage.src = e.target.result;
+              selectedImage = new Image();
+              selectedImage.src = e.target.result;
 
-                selectedImage.onload = function () {
-                    imageContainer.innerHTML = '';
-                    imageContainer.appendChild(selectedImage);
-                    colorValue.innerHTML = `<p class="text-lg">Mouse over image to select color</p>`;
-                    setupColorPicker();
-                };
+              selectedImage.onload = function () {
+                imageContainer.innerHTML = '';
+                imageContainer.appendChild(selectedImage);
+                colorValue.innerHTML = `<p class="text-sm">Mouse over image to select color<br/> Click to copy color to clipboard</p>`;
+                setupColorPicker();
+              };
             };
 
             reader.readAsDataURL(file);
@@ -31,7 +31,7 @@
     }
 
     function setupColorPicker() {
-    // imageContainer.addEventListener('mousemove', updateColorInfo);
+
     imageContainer.addEventListener('click', copyColorToClipboard);
 
     colorPicker.style.display = 'block';
@@ -40,19 +40,17 @@
     const x = event.pageX - imageContainer.offsetLeft;
     const y = event.pageY - imageContainer.offsetTop;
 
-    // console.log('Mouse coordinates:', x, y);
-    // console.log('Is inside image:', isMouseInsideImage(event));
-
     if (isMouseInsideImage(event)) {
         const pixel = getPixelColor(x, y);
         updateColorPickerPosition(x, y);
         colorValue.textContent = pixel;
         renderColorPreviewBlock(pixel);
-    } else {
-        // If the mouse is outside the image bounds, hide the color block
-        hideColorPreviewBlock();
-        colorValue.textContent = "";
-    }
+    } 
+    // else {
+    //     // if mouse outside image bounds hide color block
+    //     hideColorPreviewBlock();
+    //     colorValue.textContent = "";
+    // }
 });
 
 }
@@ -65,25 +63,25 @@ function isMouseInsideImage(event) {
 }
 
 
-function hideColorPreviewBlock() {
-    const existingColorBlock = document.getElementById('color-block');
-    if (existingColorBlock) {
-        colorInfo.removeChild(existingColorBlock);
-    }
-}
+// function hideColorPreviewBlock() {
+//     const existingColorBlock = document.getElementById('color-block');
+//     if (existingColorBlock) {
+//         colorInfo.removeChild(existingColorBlock);
+//     }
+// }
 
 
 
 
   function renderColorPreviewBlock(color) {
       const colorBlock = document.createElement('div');
-      colorBlock.style.width = '300px';
-      colorBlock.style.height = '50px';
-      colorBlock.style.marginTop = '10px'; // Adjust margin as needed
+      colorBlock.style.width = '100%';
+      colorBlock.style.height = '70px';
+      colorBlock.style.marginRight = '10px';
 
       colorBlock.style.backgroundColor = color;
       
-      // Remove any existing color block before adding a new one
+      // remove color block before adding new one
       const existingColorBlock = document.getElementById('color-block');
       if (existingColorBlock) {
           colorInfo.removeChild(existingColorBlock);
@@ -116,31 +114,30 @@ function hideColorPreviewBlock() {
       colorPicker.style.top = y - colorPicker.offsetHeight / 2 + 'px';
   }
 
-  // function updateColorInfo(event) {
-  //     const x = event.pageX - imageContainer.offsetLeft;
-  //     const y = event.pageY - imageContainer.offsetTop;
-
-  //     const pixel = getPixelColor(x, y);
-  //     colorValue.textContent = `Selected Color: ${pixel}`;
-  // }
-
 function copyColorToClipboard() {
     const imageColorCopiedMessage = document.getElementById('imageColorCopiedMessage');
     const choices = document.getElementById('choices');
 
     const textArea = document.createElement('textarea');
-    const colorHex = colorValue.textContent;
+    const color = colorValue.textContent;
 
-    textArea.value = colorHex;
+    textArea.value = color;
     document.body.appendChild(textArea);
     textArea.select();
-    document.execCommand('copy');
+    
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(color);
+    } else{
+      document.execCommand('copy'); // FOR IOS
+    }
+
     document.body.removeChild(textArea);
 
-    const colorBlock = createColorBlock(colorHex);
+    const colorBlock = createColorBlock(color);
     choices.appendChild(colorBlock);
 
-    imageColorCopiedMessage.innerHTML = 'Color code copied to clipboard!';
+    imageColorCopiedMessage.innerHTML = `<div class="color-code-copied-to-clipboard"><p class="bg-[${color}] p-2"><span class="bg-white text-black p-1">${color}</span></p><p class="p-2 mt-1 bg-black text-white">copied to clipboard</p></div>`;
+
     setTimeout(() => {
         imageColorCopiedMessage.innerHTML = '';
     }, 2000);
@@ -152,39 +149,41 @@ function createColorBlock(color) {
 
     const colorBlockGroup = document.createElement('div');
     colorBlockGroup.classList.add("flex", "items-center", "min-w-[135px]", "mr-2", "mb-2")
-    // Color Block
+
     const colorBlock = document.createElement('div');
     colorBlock.style.width = '50px';
     colorBlock.style.height = '50px';
     colorBlock.style.backgroundColor = color;
-    colorBlock.style.display = 'inline-block';
+    // colorBlock.style.display = 'inline-block';
     colorBlock.style.marginRight = '10px';
     colorBlock.style.cursor = 'pointer';
 
-    // Hex Code
     const hexCode = document.createElement('div');
     hexCode.textContent = color;
-    // hexCode.style.textAlign = 'center';
 
-    // Attach click event to copy hex code to clipboard
     colorBlock.addEventListener('click', function () {
-        const textArea = document.createElement('textarea');
-        textArea.value = color;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
+      const textArea = document.createElement('textarea');
+      textArea.value = color;
+      document.body.appendChild(textArea);
+      textArea.select();
+      
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(color);
+      } else{
+        document.execCommand('copy'); // FOR IOS
+      }
+      
+      document.body.removeChild(textArea);
 
-        copiedMessage.innerHTML = 'Color code copied to clipboard!';
-        setTimeout(() => {
-            copiedMessage.innerHTML = '';
-        }, 2000);
+      copiedMessage.innerHTML = `<div class="color-code-copied-to-clipboard"><p class="bg-[${color}] p-2"><span class="bg-white text-black p-1">${color}</span></p><p class="p-2 mt-1 bg-black text-white">copied to clipboard</p></div>`;
+      setTimeout(() => {
+          copiedMessage.innerHTML = '';
+      }, 2000);
     });
 
-    // Append elements to the group
     colorBlockGroup.appendChild(colorBlock);
     colorBlockGroup.appendChild(hexCode);
-    // Append elements to container
+
     colorBlockContainer.appendChild(colorBlockGroup);
 
     return colorBlockContainer;
