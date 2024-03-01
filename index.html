@@ -10,28 +10,71 @@
       body{
         background: #f7f7f7;
       }
-      #color-picker {
-          position: absolute;
-          display: none;
-          width: 20px;
-          height: 20px;
-          border: 2px solid #fff;
-          border-radius: 50%;
-          pointer-events: none;
-      }
-      .color-code-copied-to-clipboard{
-        z-index: 10;
+    .socials{
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+      gap: 2rem;
+    }
+    /* SVG ICONS */
+    .socials img{
+      width: 30px;
+      height: auto;
+      filter: invert(.7);
+    }
+    .socials img:hover{
+      filter: invert(0);
+    }
+
+    #spotify{
+      width: 45px;
+      margin: -10px 5px 0;
+      filter: invert(0);
+    }
+
+    #spotify:hover{
+      filter: invert(.4);
+    }
+    
+    #color-picker {
         position: absolute;
-        top: 30%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        font-family: monospace;
-        font-size: 2rem;
-      }
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .color-code-copied-to-clipboard{
+      z-index: 10;
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: monospace;
+      font-size: 2rem;
+    }
     </style>
 </head>
 <body>
+ <nav class="socials">
+      <div class="socials">
+      
+      <a href="https://github.com/pickcolorfromimage/pickcolorfromimage.github.io" target="_blank">
+        <img src="https://raw.githubusercontent.com/mattheweq/icons-repo/main/github.svg">
+      </a>
+
+      <a href="https://open.spotify.com/artist/66OsKKYin7yLMQUsZxjE91" target="_blank">
+        <img  id="spotify" src="https://raw.githubusercontent.com/mattheweq/icons-repo/main/soundwave.svg">
+      </a>
+
+      <a href="mailto:mattheweq8@gmail.com">
+        <img src="https://raw.githubusercontent.com/mattheweq/icons-repo/main/email.svg">
+      </a>
+    </div>
+  </nav>
+
 <div class="max-w-[600px] mx-auto mt-8">
 
     <div id="copiedMessage" class="mb-2"></div>
@@ -51,15 +94,25 @@
     <div id="imageColorCopiedMessage" class="mt-2"></div>
 
 
-    <div class="flex justify-center">
+    <div class="flex justify-center ml-16">
       <input type="file" id="image-input" accept="image/*" class="my-2">
     </div>
 
 
     <div class="flex">
       <div id="image-container" class="mx-auto mt-2">
-        
-        <img alt="Upload an image" class="text-lg mt-24">
+
+        <div class="flex flex-col items-center justify-center mt-5">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+
+          <p class="font-bold text-lg px-3 py-2 mt-8 bg-yellow-300">Press 'Browse' above to begin</p>
+
+          <p class="text-3xl mt-10 font-mono"><span class="text-red-500">Pick</span> <span class="text-green-500">color</span> <span class="text-purple-500">from</span> <span class="text-blue-500">image</span></p>
+        </div>
+
+        <img src="trans.png" alt="Upload an image" class="text-lg mt-24">
         
       </div>
     </div>

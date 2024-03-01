@@ -21,7 +21,7 @@
               selectedImage.onload = function () {
                 imageContainer.innerHTML = '';
                 imageContainer.appendChild(selectedImage);
-                colorValue.innerHTML = `<p class="text-sm">Mouse over image to select color<br/> Click to copy color to clipboard</p>`;
+                colorValue.innerHTML = `<p class="bg-yellow-400 text-center text-lg italic h-[68px] mt-1 pt-1">Mouse over image to select color<br/> <span class="font-bold">Click</span> to <span class="font-bold">copy color</span> to <span class="font-bold">clipboard</span></p>`;
                 setupColorPicker();
               };
             };
