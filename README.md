@@ -1,6 +1,6 @@
-## Project Name
+## Pick Color From Image
 
-[LIVE SITE]()
+[LIVE SITE](https://pickcolorfromimage.github.io)
 
 ![ALT:preview](preview.png)
 
