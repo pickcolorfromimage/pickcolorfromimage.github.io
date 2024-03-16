@@ -1,4 +1,4 @@
-  document.getElementById('image-input').addEventListener('change', handleImageUpload);
+  document.getElementById('fileInput').addEventListener('change', handleImageUpload);
     
     let imageContainer = document.getElementById('image-container');
     let colorPicker = document.getElementById('color-picker');
@@ -8,67 +8,133 @@
 
     let selectedImage;
 
+
     function handleImageUpload(event) {
         const file = event.target.files[0];
+        handleFile(file);
+    }
 
+    function handleFile(file) {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
 
             reader.onload = function (e) {
-              selectedImage = new Image();
-              selectedImage.src = e.target.result;
+                selectedImage = new Image();
+                selectedImage.src = e.target.result;
 
-              selectedImage.onload = function () {
-                imageContainer.innerHTML = '';
-                imageContainer.appendChild(selectedImage);
-                colorValue.innerHTML = `<p class="bg-yellow-400 text-center text-lg italic h-[68px] mt-1 pt-1">Mouse over image to select color<br/> <span class="font-bold">Click</span> to <span class="font-bold">copy color</span> to <span class="font-bold">clipboard</span></p>`;
-                setupColorPicker();
-              };
+                selectedImage.onload = function () {
+                    imageContainer.innerHTML = '';
+                    imageContainer.appendChild(selectedImage);
+                    colorValue.innerHTML = `<p class="bg-yellow-400 text-center text-lg italic h-[68px] mt-1 pt-1">Mouse over image to select color<br/> <span class="font-bold">Click</span> to <span class="font-bold">copy color</span> to <span class="font-bold">clipboard</span></p>`;
+                    setupColorPicker();
+                };
             };
 
             reader.readAsDataURL(file);
         }
     }
 
+    function setupDropZone(dropZoneId) {
+        const dropZone = document.getElementById(dropZoneId);
+
+        dropZone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = event.dataTransfer.files[0];
+            handleFile(file);
+        });
+    }
+
+    setupDropZone('dropZone');
+
+    
     function setupColorPicker() {
+    let timeout;
 
     imageContainer.addEventListener('click', copyColorToClipboard);
 
-    colorPicker.style.display = 'block';
-
     imageContainer.addEventListener('mousemove', function (event) {
-    const x = event.pageX - imageContainer.offsetLeft;
-    const y = event.pageY - imageContainer.offsetTop;
+        const x = event.pageX - imageContainer.offsetLeft;
+        const y = event.pageY - imageContainer.offsetTop;
 
-    if (isMouseInsideImage(event)) {
-        const pixel = getPixelColor(x, y);
-        updateColorPickerPosition(x, y);
-        colorValue.textContent = pixel;
-        renderColorPreviewBlock(pixel);
-    } 
-    // else {
-    //     // if mouse outside image bounds hide color block
-    //     hideColorPreviewBlock();
-    //     colorValue.textContent = "";
-    // }
-});
+        if (isMouseInsideImage(event)) {
+            colorPicker.style.display = 'block';
+            colorPicker.style.opacity = 0.5;
 
+            colorInfo.classList.remove("fade-out");
+            colorValue.classList.remove("fade-out");
+            colorInfo.style.display = "block";
+            colorValue.style.display = "block";
+
+            const pixel = getPixelColor(x, y);
+            updateColorPickerPosition(event.clientX, event.clientY, pixel);
+          
+            colorValue.textContent = pixel;
+            renderColorPreviewBlock(pixel);
+
+            // reset so mouse/loupe re-appears
+            if (timeout) {
+              clearTimeout(timeout);
+            }
+          } 
+
+        // hide color picker after 2 seconds of mouse inactivity
+        timeout = setTimeout(() => {
+          colorPicker.style.display = 'none';
+
+          colorInfo.classList.add("fade-out");
+          colorValue.classList.add("fade-out");
+          setTimeout(() => {
+            colorInfo.style.display = "none";
+            colorValue.style.display = "none";
+          }, 500);
+        }, 5000);
+
+        
+    });
 }
 
+
+
+ function updateColorPickerPosition(x, y, pixelColor) {
+    const pixelSize = 50;
+    const offsetX = colorPicker.offsetWidth / 2;
+    const offsetY = colorPicker.offsetHeight / 2;
+
+    if (pixelColor) {
+        // ?calculate new size of the colorPicker based on the pixelColor
+        colorPicker.style.width = pixelSize + 'px';
+        colorPicker.style.height = pixelSize + 'px';
+
+        // update the position of the colorPicker
+        colorPicker.style.left = (x - pixelSize / 2) + 'px';
+        colorPicker.style.top = (y - pixelSize / 2) + 'px';
+
+        // add pixelColor background to current colorPicker loupe
+        colorPicker.style.backgroundColor = pixelColor;
+    } else {
+        // when pixelColor is not provided:
+        colorPicker.style.left = x - offsetX + 'px';
+        colorPicker.style.top = y - offsetY + 'px';
+    }
+}
+
+  
 function isMouseInsideImage(event) {
     const x = event.pageX - imageContainer.offsetLeft;
     const y = event.pageY - imageContainer.offsetTop;
     
     return x >= 0 && x < selectedImage.width && y >= 0 && y < selectedImage.height;
 }
-
-
-// function hideColorPreviewBlock() {
-//     const existingColorBlock = document.getElementById('color-block');
-//     if (existingColorBlock) {
-//         colorInfo.removeChild(existingColorBlock);
-//     }
-// }
 
 
 
@@ -92,6 +158,15 @@ function isMouseInsideImage(event) {
   }
 
 
+  // function hideColorPreviewBlock() {
+  //   const existingColorBlock = document.getElementById('color-block');
+  //   if (existingColorBlock) {
+  //       colorInfo.removeChild(existingColorBlock);
+  //   }
+  // }
+
+
+
   function getPixelColor(x, y) {
       const canvas = document.createElement('canvas');
       canvas.width = selectedImage.width;
@@ -109,10 +184,8 @@ function isMouseInsideImage(event) {
       return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
   }
 
-  function updateColorPickerPosition(x, y) {
-      colorPicker.style.left = x - colorPicker.offsetWidth / 2 + 'px';
-      colorPicker.style.top = y - colorPicker.offsetHeight / 2 + 'px';
-  }
+ 
+
 
 function copyColorToClipboard() {
     const imageColorCopiedMessage = document.getElementById('imageColorCopiedMessage');
