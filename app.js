@@ -54,7 +54,8 @@
         });
     }
 
-    setupDropZone('dropZone');
+    // id for html element
+    setupDropZone('drop-zone');
 
     
     function setupColorPicker() {
@@ -87,7 +88,7 @@
             }
           } 
 
-        // hide color picker after 2 seconds of mouse inactivity
+        // hide color picker after 5 seconds of mouse inactivity
         timeout = setTimeout(() => {
           colorPicker.style.display = 'none';
 
@@ -96,8 +97,8 @@
           setTimeout(() => {
             colorInfo.style.display = "none";
             colorValue.style.display = "none";
-          }, 500);
-        }, 5000);
+          }, 1000);
+        }, 3000);
 
         
     });

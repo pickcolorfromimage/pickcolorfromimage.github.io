@@ -9,29 +9,38 @@
 <style>
 body{
   background: #f7f7f7;
+  transition: all .5s ease-out;
 }
+/* body onload */
 .fade-in{
   opacity: 0;
-  animation: fadeIn .3s ease-in forwards;
+  animation: fadeIn .5s ease-in forwards;
 }
-.fade-out{
-  opacity: 1;
-  animation: fadeOut .3s ease-in forwards;
-}
-
 @keyframes fadeIn {
   0% {
+    animation: ease-in;
     opacity: 0%;
   }
   100% {
+    animation: ease-out;
     opacity: 100%;
   }
 }
+
+
+/* elegantly hide color preview block and color hex text */
+.fade-out{
+  opacity: 1;
+  height: 0;
+  animation: fadeOut .3s ease-in forwards;
+}
 @keyframes fadeOut {
   0% {
+    animation: ease-in;
     opacity: 100%;
   }
   100% {
+    animation: ease-out;
     opacity: 0%;
   }
 }
@@ -139,7 +148,7 @@ body{
 <!-- \RENDER AS BLOCKS - SELECTED COLORS PICKED FROM UPLOADED IMAGE -->
 
 <!-- COLOR PREVIEW BLOCK AND HEX VALUE -->
-<div class="transition transform duration-500 ease-in-out flex items-center">
+<div class="flex items-center">
     <div id="color-info" class="flex-1"></div>
     <p class="flex-1 text-right text-7xl"><span id="color-value"></span></p>
 </div>
@@ -172,9 +181,9 @@ body{
 
 <!-- IMAGE DROPZONE OR FILE UPLOAD -->
 <label for="fileInput">
-    <div id="dropZone" class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg p-4">
+    <div id="drop-zone" class="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-lg p-4">
 
-      <p class="mt-1 text-lg text-gray-700 text-center">Drag and drop an image inside the dotted lines</p>
+      <p class="select-none mt-1 text-lg text-gray-700 text-center">Drag and drop an image inside the dotted lines</p>
     
       <div class="mt-4">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16">
@@ -182,7 +191,7 @@ body{
           </svg>
       </div>
 
-      <p class="mt-2 text-lg text-gray-700 text-center">or</p>
+      <p class="select-none mt-2 text-lg text-gray-700 text-center">or</p>
 
       <input type="file" id="fileInput" class="hidden" accept="image/*">
     
